@@ -276,8 +276,11 @@ func StreamClientInterceptor(opts ...Option) grpc.StreamClientInterceptor {
 		Inject(ctx, &metadataCopy, opts...)
 		ctx = metadata.NewOutgoingContext(ctx, metadataCopy)
 
+		var stream *clientStream
 		s, err := streamer(ctx, desc, cc, method, callOpts...)
-		stream := wrapClientStream(s, desc)
+		if err == nil {
+			stream = wrapClientStream(s, desc)
+		}
 
 		go func() {
 			if err == nil {
